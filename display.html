@@ -48,42 +48,6 @@
       border: 1px solid #ccc;
       border-radius: 5px;
     }
-
-    /* 반응형 디자인: 화면 크기가 768px 이하 (작은 화면) */
-    @media (max-width: 768px) {
-      body {
-        margin: 10px;
-      }
-      #textDisplay {
-        height: 50vh;
-        padding: 8px;
-        font-size: 14px;
-      }
-      #saveButton {
-        font-size: 12px;
-        padding: 8px;
-        top: 10px;
-        right: 10px;
-      }
-      select {
-        font-size: 12px;
-        margin: 5px 0;
-      }
-    }
-
-    /* 반응형 디자인: 가로 모드 (가로 방향으로 길어진 화면) */
-    @media (orientation: landscape) and (max-width: 1024px) {
-      #textDisplay {
-        height: 70vh; /* 가로 모드에서는 더 많은 공간 사용 */
-        font-size: 16px; /* 텍스트 크기 조금 증가 */
-      }
-      #saveButton {
-        font-size: 13px; /* 가로 모드에서도 적절히 크기 조정 */
-      }
-      select {
-        font-size: 13px;
-      }
-    }
   </style>
 </head>
 <body>
@@ -109,14 +73,14 @@
 
     <label for="bgColorSelector">배경색:</label>
     <select id="bgColorSelector" onchange="updateBackgroundColor()">
-      <option value="black" selected>검정</option>
-      <option value="white">흰색</option>
+      <option value="white" selected>흰색</option>
+      <option value="black">검정</option>
     </select>
 
     <label for="textColorSelector">글자색:</label>
     <select id="textColorSelector" onchange="updateTextColor()">
-      <option value="white" selected>흰색</option>
-      <option value="black">검정</option>
+      <option value="black" selected>검정</option>
+      <option value="white">흰색</option>
       <option value="yellow">노란색</option>
     </select>
   </div>
@@ -148,21 +112,46 @@
         textDisplay.scrollTop = textDisplay.scrollHeight; // 스크롤 자동 이동
     });
 
+    // 로컬 스토리지에서 설정 불러오기
+    window.onload = function() {
+        const savedFontSize = localStorage.getItem('fontSize');
+        const savedBgColor = localStorage.getItem('bgColor');
+        const savedTextColor = localStorage.getItem('textColor');
+
+        if (savedFontSize) {
+            document.getElementById("fontSizeSelector").value = savedFontSize;
+            document.getElementById("textDisplay").style.fontSize = savedFontSize + "px";
+        }
+        if (savedBgColor) {
+            document.getElementById("bgColorSelector").value = savedBgColor;
+            document.body.style.backgroundColor = savedBgColor;
+            document.getElementById("textDisplay").style.backgroundColor = savedBgColor;
+        }
+        if (savedTextColor) {
+            document.getElementById("textColorSelector").value = savedTextColor;
+            document.body.style.color = savedTextColor;
+            document.getElementById("textDisplay").style.color = savedTextColor;
+        }
+    };
+
     function updateFontSize() {
         const fontSize = document.getElementById("fontSizeSelector").value;
         document.getElementById("textDisplay").style.fontSize = fontSize + "px";
+        localStorage.setItem('fontSize', fontSize); // 로컬 스토리지에 저장
     }
 
     function updateBackgroundColor() {
         const bgColor = document.getElementById("bgColorSelector").value;
         document.body.style.backgroundColor = bgColor;
         document.getElementById("textDisplay").style.backgroundColor = bgColor;
+        localStorage.setItem('bgColor', bgColor); // 로컬 스토리지에 저장
     }
 
     function updateTextColor() {
         const textColor = document.getElementById("textColorSelector").value;
         document.body.style.color = textColor;
         document.getElementById("textDisplay").style.color = textColor;
+        localStorage.setItem('textColor', textColor); // 로컬 스토리지에 저장
     }
 
     function saveText() {
