@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>학생용</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: white; /* 기본 배경색 검정 */
+      color: black; /* 기본 텍스트 색상 흰색 */
+    }
+    #textDisplay {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: white; /* 텍스트 상자 배경 진회색 */
+      color: black; /* 텍스트 색상 흰색 */
+      text-align: left; /* 텍스트 왼쪽 정렬 */
+      white-space: pre-wrap; /* 줄 바꿈 유지 */
+      overflow-wrap: break-word; /* 단어 줄 바꿈 */
+      height: 60vh; /* 화면 높이의 60% */
+      overflow-y: auto; /* 텍스트가 넘칠 경우 스크롤바 표시 */
+    }
+    #saveButton {
+      position: absolute;
+      top: 20px;
+      right: 20px; /* 버튼을 상단 우측으로 배치 */
+      padding: 10px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #saveButton:hover {
+      background-color: #0056b3;
+    }
+    .control-panel {
+      margin: 10px 0;
+    }
+    select {
+      margin: 0 10px;
+      padding: 5px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h2>문자통역 학생용</h2>
+  <button id="saveButton" onclick="saveText()">저장</button> <!-- 저장 버튼을 상단으로 이동 -->
+
+  <!-- 제어 패널 -->
+  <div class="control-panel">
+    <label for="fontSizeSelector">글자 크기:</label>
+    <select id="fontSizeSelector" onchange="updateFontSize()">
+      <option value="10">10</option>
+      <option value="12">12</option>
+      <option value="14">14</option>
+      <option value="16" selected>16</option> <!-- 기본값 16 -->
+      <option value="18">18</option>
+      <option value="20">20</option>
+      <option value="22">22</option>
+      <option value="24">24</option>
+      <option value="26">26</option>
+      <option value="28">28</option>
+      <option value="30">30</option>
+    </select>
+
+    <label for="bgColorSelector">배경색:</label>
+    <select id="bgColorSelector" onchange="updateBackgroundColor()">
+      <option value="black" selected>검정</option>
+      <option value="white">흰색</option>
+    </select>
+
+    <label for="textColorSelector">글자색:</label>
+    <select id="textColorSelector" onchange="updateTextColor()">
+      <option value="white" selected>흰색</option>
+      <option value="black">검정</option>
+      <option value="yellow">노란색</option>
+    </select>
+  </div>
+
+  <!-- 텍스트 출력 -->
+  <div id="textDisplay">아직 텍스트가 없습니다.</div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script>
+    // Firebase 설정
+    const firebaseConfig = {
+        apiKey: "AIzaSyBMbEBNGO9pqvvHSw1HcvPBwdGndJzMbfc",
+        authDomain: "ysb-project1.firebaseapp.com",
+        databaseURL: "https://ysb-project1-default-rtdb.firebaseio.com",
+        projectId: "ysb-project1",
+        storageBucket: "ysb-project1.appspot.com",
+        messagingSenderId: "1094036056037",
+        appId: "1:1094036056037:web:96bbc764e29568e03bb10c"
+    };
+
+    // Firebase 초기화
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // 실시간 데이터 업데이트
+    database.ref("texts").on("value", (snapshot) => {
+        const data = snapshot.val();
+        const textDisplay = document.getElementById("textDisplay");
+        textDisplay.innerText = data ? data.message : "아직 텍스트가 없습니다.";
+        
+        // 자동 스크롤 기능
+        textDisplay.scrollTop = textDisplay.scrollHeight;
+    });
+
+    // 글자 크기 업데이트 함수
+    function updateFontSize() {
+        const fontSize = document.getElementById("fontSizeSelector").value;
+        const textDisplay = document.getElementById("textDisplay");
+        textDisplay.style.fontSize = fontSize + "px";
+    }
+
+    // 배경색 업데이트 함수
+    function updateBackgroundColor() {
+        const bgColor = document.getElementById("bgColorSelector").value;
+        document.body.style.backgroundColor = bgColor; // 본문 배경색 변경
+        const textDisplay = document.getElementById("textDisplay");
+        textDisplay.style.backgroundColor = bgColor; // 텍스트 상자 배경색 변경
+    }
+
+    // 글자색 업데이트 함수
+    function updateTextColor() {
+        const textColor = document.getElementById("textColorSelector").value;
+        document.body.style.color = textColor; // 본문 글자색 변경
+        const textDisplay = document.getElementById("textDisplay");
+        textDisplay.style.color = textColor; // 텍스트 상자 글자색 변경
+    }
+
+    // 텍스트 저장 함수
+    function saveText() {
+        const text = document.getElementById("textDisplay").innerText;
+        const lines = text.split("\n"); // 텍스트를 줄 단위로 나누기
+        const fileName = lines[0] ? lines[0].trim() : "빈파일"; // 첫 줄을 파일 이름으로 설정
+        const blob = new Blob([text], { type: "text/plain" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `${fileName}.txt`;
+        a.click();
+    }
+  </script>
+</body>
+</html>
