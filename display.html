@@ -2,36 +2,38 @@
 <html>
 <head>
   <title>학생용</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 뷰포트 설정 -->
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
-      background-color: white; /* 기본 배경색 검정 */
-      color: black; /* 기본 텍스트 색상 흰색 */
+      background-color: black;
+      color: white;
     }
     #textDisplay {
       margin-top: 20px;
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 5px;
-      background-color: white; /* 텍스트 상자 배경 진회색 */
-      color: black; /* 텍스트 색상 흰색 */
-      text-align: left; /* 텍스트 왼쪽 정렬 */
-      white-space: pre-wrap; /* 줄 바꿈 유지 */
-      overflow-wrap: break-word; /* 단어 줄 바꿈 */
-      height: 60vh; /* 화면 높이의 60% */
-      overflow-y: auto; /* 텍스트가 넘칠 경우 스크롤바 표시 */
+      background-color: #222;
+      color: white;
+      text-align: left;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+      height: 60vh;
+      overflow-y: auto;
     }
     #saveButton {
       position: absolute;
       top: 20px;
-      right: 20px; /* 버튼을 상단 우측으로 배치 */
+      right: 20px;
       padding: 10px;
       background-color: #007BFF;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      font-size: 14px;
     }
     #saveButton:hover {
       background-color: #0056b3;
@@ -46,11 +48,47 @@
       border: 1px solid #ccc;
       border-radius: 5px;
     }
+
+    /* 반응형 디자인: 화면 크기가 768px 이하 (작은 화면) */
+    @media (max-width: 768px) {
+      body {
+        margin: 10px;
+      }
+      #textDisplay {
+        height: 50vh;
+        padding: 8px;
+        font-size: 14px;
+      }
+      #saveButton {
+        font-size: 12px;
+        padding: 8px;
+        top: 10px;
+        right: 10px;
+      }
+      select {
+        font-size: 12px;
+        margin: 5px 0;
+      }
+    }
+
+    /* 반응형 디자인: 가로 모드 (가로 방향으로 길어진 화면) */
+    @media (orientation: landscape) and (max-width: 1024px) {
+      #textDisplay {
+        height: 70vh; /* 가로 모드에서는 더 많은 공간 사용 */
+        font-size: 16px; /* 텍스트 크기 조금 증가 */
+      }
+      #saveButton {
+        font-size: 13px; /* 가로 모드에서도 적절히 크기 조정 */
+      }
+      select {
+        font-size: 13px;
+      }
+    }
   </style>
 </head>
 <body>
   <h2>문자통역 학생용</h2>
-  <button id="saveButton" onclick="saveText()">저장</button> <!-- 저장 버튼을 상단으로 이동 -->
+  <button id="saveButton" onclick="saveText()">저장</button>
 
   <!-- 제어 패널 -->
   <div class="control-panel">
@@ -59,7 +97,7 @@
       <option value="10">10</option>
       <option value="12">12</option>
       <option value="14">14</option>
-      <option value="16" selected>16</option> <!-- 기본값 16 -->
+      <option value="16" selected>16</option>
       <option value="18">18</option>
       <option value="20">20</option>
       <option value="22">22</option>
@@ -69,13 +107,13 @@
       <option value="30">30</option>
     </select>
 
-    <label for="bgColorSelector">배경색:</label>
+    <label for="bgColorSelector">전체 배경색:</label>
     <select id="bgColorSelector" onchange="updateBackgroundColor()">
       <option value="black" selected>검정</option>
       <option value="white">흰색</option>
     </select>
 
-    <label for="textColorSelector">글자색:</label>
+    <label for="textColorSelector">전체 글자색:</label>
     <select id="textColorSelector" onchange="updateTextColor()">
       <option value="white" selected>흰색</option>
       <option value="black">검정</option>
@@ -89,7 +127,6 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script>
-    // Firebase 설정
     const firebaseConfig = {
         apiKey: "AIzaSyBMbEBNGO9pqvvHSw1HcvPBwdGndJzMbfc",
         authDomain: "ysb-project1.firebaseapp.com",
@@ -100,7 +137,6 @@
         appId: "1:1094036056037:web:96bbc764e29568e03bb10c"
     };
 
-    // Firebase 초기화
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
@@ -109,39 +145,30 @@
         const data = snapshot.val();
         const textDisplay = document.getElementById("textDisplay");
         textDisplay.innerText = data ? data.message : "아직 텍스트가 없습니다.";
-        
-        // 자동 스크롤 기능
-        textDisplay.scrollTop = textDisplay.scrollHeight;
+        textDisplay.scrollTop = textDisplay.scrollHeight; // 스크롤 자동 이동
     });
 
-    // 글자 크기 업데이트 함수
     function updateFontSize() {
         const fontSize = document.getElementById("fontSizeSelector").value;
-        const textDisplay = document.getElementById("textDisplay");
-        textDisplay.style.fontSize = fontSize + "px";
+        document.getElementById("textDisplay").style.fontSize = fontSize + "px";
     }
 
-    // 배경색 업데이트 함수
     function updateBackgroundColor() {
         const bgColor = document.getElementById("bgColorSelector").value;
-        document.body.style.backgroundColor = bgColor; // 본문 배경색 변경
-        const textDisplay = document.getElementById("textDisplay");
-        textDisplay.style.backgroundColor = bgColor; // 텍스트 상자 배경색 변경
+        document.body.style.backgroundColor = bgColor;
+        document.getElementById("textDisplay").style.backgroundColor = bgColor;
     }
 
-    // 글자색 업데이트 함수
     function updateTextColor() {
         const textColor = document.getElementById("textColorSelector").value;
-        document.body.style.color = textColor; // 본문 글자색 변경
-        const textDisplay = document.getElementById("textDisplay");
-        textDisplay.style.color = textColor; // 텍스트 상자 글자색 변경
+        document.body.style.color = textColor;
+        document.getElementById("textDisplay").style.color = textColor;
     }
 
-    // 텍스트 저장 함수
     function saveText() {
         const text = document.getElementById("textDisplay").innerText;
-        const lines = text.split("\n"); // 텍스트를 줄 단위로 나누기
-        const fileName = lines[0] ? lines[0].trim() : "빈파일"; // 첫 줄을 파일 이름으로 설정
+        const lines = text.split("\n");
+        const fileName = lines[0] ? lines[0].trim() : "빈파일";
         const blob = new Blob([text], { type: "text/plain" });
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
