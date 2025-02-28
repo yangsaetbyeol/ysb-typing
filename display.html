@@ -7,16 +7,16 @@
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
-      background-color: black;
-      color: white;
+      background-color: white;
+      color: black;
     }
     #textDisplay {
       margin-top: 20px;
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 5px;
-      background-color: #222;
-      color: white;
+      background-color: white;
+      color: black;
       text-align: left;
       white-space: pre-wrap;
       overflow-wrap: break-word;
@@ -87,7 +87,7 @@
   </style>
 </head>
 <body>
-  <h2>문자통역 학생용</h2>
+  <h1>문자통역 학생용</h1>
   <button id="saveButton" onclick="saveText()">저장</button>
 
   <!-- 제어 패널 -->
@@ -107,13 +107,13 @@
       <option value="30">30</option>
     </select>
 
-    <label for="bgColorSelector">전체 배경색:</label>
+    <label for="bgColorSelector">배경색:</label>
     <select id="bgColorSelector" onchange="updateBackgroundColor()">
       <option value="black" selected>검정</option>
       <option value="white">흰색</option>
     </select>
 
-    <label for="textColorSelector">전체 글자색:</label>
+    <label for="textColorSelector">글자색:</label>
     <select id="textColorSelector" onchange="updateTextColor()">
       <option value="white" selected>흰색</option>
       <option value="black">검정</option>
