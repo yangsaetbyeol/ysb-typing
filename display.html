@@ -146,6 +146,8 @@
             document.getElementById("textDisplay").style.color = savedTextColor;
             document.getElementById("userNames").style.color = savedTextColor; // 사용자 이름 글자색 업데이트
         }
+        
+        requestWakeLock(); // Wake Lock 요청
     };
 
     // 글자 크기 업데이트 함수
@@ -171,6 +173,30 @@
         document.getElementById("userNames").style.color = textColor; // 사용자 이름 글자색 업데이트
         localStorage.setItem('textColor', textColor);
     }
+
+    // Wake Lock API 설정
+    let wakeLock = null;
+
+    async function requestWakeLock() {
+        try {
+            wakeLock = await navigator.wakeLock.request('screen');
+            console.log('Wake Lock is active');
+        } catch (err) {
+            console.error(`${err.name}, ${err.message}`);
+        }
+    }
+
+    // Wake Lock 해제
+    async function releaseWakeLock() {
+        if (wakeLock !== null) {
+            await wakeLock.release();
+            wakeLock = null;
+            console.log('Wake Lock is released');
+        }
+    }
+
+    // 페이지를 떠날 때 Wake Lock 해제
+    window.addEventListener('beforeunload', releaseWakeLock);
   </script>
 </body>
 </html>
